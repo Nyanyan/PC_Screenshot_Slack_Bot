@@ -18,9 +18,12 @@ import wmi
 def get_cpu_temperature():
     w = wmi.WMI(namespace="root\\wmi")
     temperature_info = w.MSAcpi_ThermalZoneTemperature()
+    res = -1
     for temp in temperature_info:
-        return temp.CurrentTemperature / 10.0 - 273.15
-    return -1
+        t = temp.CurrentTemperature / 10.0 - 273.15
+        print(temp, t)
+        res = t
+    return res
 
 dt_now = datetime.datetime.now()
 
