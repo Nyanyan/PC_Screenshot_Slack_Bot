@@ -20,7 +20,8 @@ def get_cpu_temperature():
     temperature_info = w.MSAcpi_ThermalZoneTemperature()
     res = -1
     for temp in temperature_info:
-        t = temp.CurrentTemperature / 10.0 - 273.15
+        #t = temp.CurrentTemperature / 10.0 - 273.15
+        t = temp.ActiveTripPoint[0] / 10.0 - 273.15
         print(temp, t)
         res = t
     return res
