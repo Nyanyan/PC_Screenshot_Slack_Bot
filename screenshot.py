@@ -9,19 +9,28 @@ from slack_sdk import WebClient
 import pyautogui
 import psutil
 import datetime
+import wmi
 
 #import os
 #slack_token = os.environ["SLACK_PC_SCREEN_SENDER_TOKEN"]
 #client = WebClient(token=slack_token)
+
+def get_cpu_temperature():
+    w = wmi.WMI(namespace="root\\wmi")
+    temperature_info = w.MSAcpi_ThermalZoneTemperature()
+    for temp in temperature_info:
+        return temp.CurrentTemperature / 10.0 - 273.15
+    return -1
 
 dt_now = datetime.datetime.now()
 
 cpu_percent = psutil.cpu_percent(interval=1)
 cpu_freq = psutil.cpu_freq().current
 memory_info = psutil.virtual_memory()
+cpu_temperature = get_cpu_temperature()
 
 txt =  PC_NAME + ' ' + dt_now.strftime('%Y/%m/%d %H:%M:%S') + '\n'
-txt += 'CPU: ' + str(cpu_percent) + ' % @ ' + str(cpu_freq / 1000) + ' GHz' + '\n'
+txt += 'CPU: ' + str(cpu_percent) + ' % @ ' + str(cpu_freq / 1000) + ' GHz ' + str(round(cpu_temperature, 1)) + ' *C' + '\n'
 txt += 'Mem: ' + str(round(memory_info.used / 1024 / 1024 / 1024, 1)) + ' GB ( ' + str(memory_info.percent) + ' % )' + '\n'
 print(txt)
 
